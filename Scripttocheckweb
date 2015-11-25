@@ -1,0 +1,84 @@
+#! /bin/bash
+file=${1:-'web_urls'}
+while read line
+do
+   set -- $line
+   case $1 in
+   *"#"*)      echo $line > /dev/null
+               ;; 
+   *"@"*)      echo $line | tr -d "#!"
+               ;; 
+   *"https:"*) outp=$(curl --connect-timeout 3 --max-time 6 -vkI "$1" 2>&1)
+               rc1=$?
+               if [ $rc1 -eq 0 ] || [ $rc1 -eq 52 ] ; then
+                  echo "Connection to $1 was successful"
+               elif [ $rc1 -eq 7 ] ; then
+                  echo "Connection to $1 was not successful"
+               else
+                  echo $outp | grep "Connected to" > /dev/null
+                  rc2=$?
+                  if [ $rc2 -eq 0 ] ; then
+                     echo "Connection to $1 was successful, but please check it manually"
+                  else
+                     echo "Connection to $1 was not successful, but please check it manually"
+                  fi
+               fi
+               sleep 1
+               ;;
+   *"http:"*)  outp=$(curl --connect-timeout 3 --max-time 6 -vkI "$1" 2>&1)
+               rc1=$?
+               if [ $rc1 -eq 0 ] || [ $rc1 -eq 52 ] ; then
+                  echo "Connection to $1 was successful"
+               elif [ $rc1 -eq 7 ] ; then
+                  echo "Connection to $1 was not successful"
+               else
+                  echo $outp | grep "Connected to" > /dev/null
+                  rc2=$?
+                  if [ $rc2 -eq 0 ] ; then
+                     echo "Connection to $1 was successful, but please check it manually"
+                  else
+                     echo "Connection to $1 was not successful, but please check it manually"
+                  fi
+               fi
+               sleep 1
+               ;;
+   *"telnet:"*)  outp=$(echo -e "\n\n^]quit"| curl --connect-timeout 3 --max-time 6 -v "$1" 2>&1)
+               rc1=$?
+               if [ $rc1 -eq 0 ] || [ $rc1 -eq 52 ] ; then
+                  echo "Connection to $1 was successful"
+               elif [ $rc1 -eq 7 ] ; then
+                  echo "Connection to $1 was not successful"
+               else
+                  echo $outp | grep "Connected to" > /dev/null
+                  rc2=$?
+                  if [ $rc2 -eq 0 ] ; then
+                     echo "Connection to $1 was successful, but please check it manually"
+                  else
+                     echo "Connection to $1 was not successful, but please check it manually"
+                  fi
+               fi
+               sleep 1
+               ;;
+   *"ldap:"*)  outp=$(curl --connect-timeout 3 --max-time 6 -v "$1" 2>&1)
+               rc1=$?
+               if [ $rc1 -eq 0 ] || [ $rc1 -eq 52 ] ; then
+                  echo "Connection to $1 was successful"
+               elif [ $rc1 -eq 7 ] ; then
+                  echo "Connection to $1 was not successful"
+               else
+                  echo $outp | grep "Connected to" > /dev/null
+                  rc2=$?
+                  if [ $rc2 -eq 0 ] ; then
+                     echo "Connection to $1 was successful, but please check it manually"
+                  else
+                     echo "Connection to $1 was not successful, but please check it manually"
+                  fi
+               fi
+               sleep 1
+               ;;
+   *)          echo "$line"
+               echo "Unsupported protocol"
+               sleep 1
+               ;;
+    esac
+done < $file
