@@ -1,9 +1,4 @@
 #change03
-<<<<<<< HEAD
-#chnage 06ravi
-=======
-#chnage 0203
->>>>>>> origin/master
 #changes 01
 #! /bin/bash
 file=${1:-'web_urls'}
